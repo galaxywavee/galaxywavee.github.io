@@ -1,1 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>waveelab</title>
+    <style>
+        /* 基础样式变量 */
+        :root {
+            --bg: #fff;         /* 默认背景色 */
+            --text: #000;       /* 默认文字颜色 */
+        }
 
+        /* 黑暗模式检测 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #121212;  /* 黑暗模式背景 */
+                --text: #e0e0e0; /* 黑暗模式文字 */
+            }
+        }
+
+        /* 全局样式 */
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 主标题样式 */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin: 0 0 1.5rem 0;
+        }
+
+        /* 链接样式 */
+        a {
+            color: var(--text);
+            text-decoration: underline; /* 下划线样式 */
+            font-size: 1.2rem;
+            transition: opacity 0.2s;
+        }
+
+        /* 链接悬停效果 */
+        a:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主标题 -->
+    <h1>waveelab</h1>
+    
+    <!-- Anki功能链接 -->
+    <a href="https://galaxywavee.github.io/anki.html">anki</a>
+</body>
+</html>
