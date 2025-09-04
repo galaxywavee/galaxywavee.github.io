@@ -9,12 +9,14 @@
             --bg: #fff;
             --text: #000;
         }
+        
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #121212;
                 --text: #e0e0e0;
             }
         }
+        
         body {
             background: var(--bg);
             color: var(--text);
@@ -29,29 +31,40 @@
             padding: 20px;
             font-weight: bold;
         }
+        
         h1 {
             font-size: 3.75rem;
+            font-weight: bold;
             margin: 0 0 1.5rem 0;
             transform: scaleY(0.72);
             transform-origin: top center;
         }
+        
         a {
             color: var(--text);
             text-decoration: underline;
-            transform: scaleY(0.72);
-            transform-origin: top center;
+            font-size: 1.2rem;
+            transition: opacity 0.2s;
             display: block;
             margin: 10px 0;
-            font-size: 1.68rem; /* 增加40% */
+            transform: scaleY(0.72);
+            transform-origin: top center;
+            font-weight: bold;
         }
+        
         a:hover {
             opacity: 0.7;
         }
+        
         footer {
             position: absolute;
             bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.6;
             transform: scaleY(0.72);
             transform-origin: top center;
+            font-weight: bold;
         }
     </style>
 </head>
