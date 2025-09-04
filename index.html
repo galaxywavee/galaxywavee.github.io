@@ -5,21 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>waveelab</title>
     <style>
-        /* 基础样式变量 */
         :root {
-            --bg: #fff;         /* 默认背景色 */
-            --text: #000;       /* 默认文字颜色 */
+            --bg: #fff;
+            --text: #000;
         }
-
-        /* 黑暗模式检测 */
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #121212;  /* 黑暗模式背景 */
-                --text: #e0e0e0; /* 黑暗模式文字 */
+                --bg: #121212;
+                --text: #e0e0e0;
             }
         }
-
-        /* 全局样式 */
         body {
             background: var(--bg);
             color: var(--text);
@@ -32,34 +27,37 @@
             justify-content: center;
             text-align: center;
             padding: 20px;
+            font-weight: bold;
         }
-
-        /* 主标题样式 */
         h1 {
-            font-size: 2.5rem;
-            font-weight: 300;
+            font-size: 3.75rem;
             margin: 0 0 1.5rem 0;
+            transform: scaleY(0.72);
+            transform-origin: top center;
         }
-
-        /* 链接样式 */
         a {
             color: var(--text);
-            text-decoration: underline; /* 下划线样式 */
-            font-size: 1.2rem;
-            transition: opacity 0.2s;
+            text-decoration: underline;
+            transform: scaleY(0.72);
+            transform-origin: top center;
+            display: block;
+            margin: 10px 0;
+            font-size: 1.68rem; /* 增加40% */
         }
-
-        /* 链接悬停效果 */
         a:hover {
             opacity: 0.7;
+        }
+        footer {
+            position: absolute;
+            bottom: 20px;
+            transform: scaleY(0.72);
+            transform-origin: top center;
         }
     </style>
 </head>
 <body>
-    <!-- 主标题 -->
     <h1>waveelab</h1>
-    
-    <!-- Anki功能链接 -->
     <a href="anki.html">anki</a>
+    <footer>copyright (c) wavee</footer>
 </body>
 </html>
