@@ -1,1 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蒸汽波艺术体验</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ff00c8;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            transition: background 1.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* 抽象诗句 */
+        .poem {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            z-index: 100;
+            max-width: 90%;
+            line-height: 1.4;
+            transform-origin: center center;
+            word-wrap: break-word;
+            white-space: normal;
+            border-radius: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Emoji元素 */
+        .emoji {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 50;
+            user-select: none;
+            pointer-events: none;
+            animation: shake 0.3s infinite alternate;
+        }
+
+        /* 动画定义 */
+        @keyframes shake {
+            0% { transform: translate(-15px, -15px) rotate(-15deg); }
+            25% { transform: translate(15px, 15px) rotate(15deg); }
+            50% { transform: translate(-15px, 15px) rotate(-15deg); }
+            75% { transform: translate(15px, -15px) rotate(15deg); }
+            100% { transform: translate(-15px, -15px) rotate(-15deg); }
+        }
+
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(var(--move-x), var(--move-y)); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(var(--rotate)); }
+        }
+
+        @keyframes scale {
+            0% { transform: scale(1); }
+            100% { transform: scale(var(--scale)); }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container"></div>
+
+    <script>
+        // 超大抽象诗句词汇库
+        const words = {
+            nouns: ["时间", "空间", "意识", "数字", "现实", "虚拟", "维度", "光", "影", "能量", 
+                    "波", "频率", "量子", "熵", "幻觉", "记忆", "未来", "过去", "存在", "虚无",
+                    "弦", "场", "粒子", "混沌", "分形", "递归", "迭代", "涌现", "自指", "悖论",
+                    "镜像", "全息", "投影", "映射", "编码", "解码", "算法", "结构", "系统", "网络",
+                    "节点", "连接", "流", "信息", "数据", "比特", "字节", "协议", "接口", "通道",
+                    "门", "阈", "限", "界", "域", "层", "级", "阶", "度", "量",
+                    "质", "能", "力", "动", "静", "变", "恒", "瞬", "永", "暂",
+                    "真", "假", "实", "虚", "有", "无", "是", "非", "同", "异",
+                    "一", "多", "全", "零", "正", "负", "加", "减", "乘", "除",
+                    "开", "闭", "内", "外", "上", "下", "左", "右", "前", "后",
+                    "疯狂", "邪典", "迷幻", "异端", "禁忌", "扭曲", "异化", "崩坏", "虚妄", "癫狂",
+                    "深渊", "异界", "异形", "异变", "异教", "邪神", "恶魔", "诅咒", "腐化", "堕落",
+                    "亵渎", "污秽", "黑暗", "阴影", "噩梦", "妄想", "疯癫", "错乱", "混乱", "无序",
+                    "梦境", "幻象", "泡沫", "彩虹", "极光", "幽灵", "谜语", "迷宫", "漩涡", "回声",
+                    "倒影", "废墟", "星辰", "尘埃", "露珠", "火焰", "冰晶", "闪电", "露水", "晨曦"],
+                    
+            verbs: ["溶解", "重构", "跳跃", "折叠", "扭曲", "闪烁", "蒸发", "凝结", "膨胀", 
+                    "收缩", "共振", "分裂", "融合", "映射", "反射", "衍射", "纠缠", "湮灭",
+                    "振荡", "旋转", "振动", "波动", "传播", "干扰", "叠加", "坍缩", "退相干",
+                    "编码", "解码", "加密", "解密", "压缩", "解压", "传输", "接收", "存储", "检索",
+                    "生成", "消解", "转化", "变形", "重组", "解构", "构建", "破坏", "创造", "毁灭",
+                    "连接", "断开", "绑定", "释放", "锁定", "解锁", "隐藏", "显现", "遮蔽", "揭示",
+                    "上升", "下降", "前进", "后退", "加速", "减速", "循环", "线性", "分支", "汇聚",
+                    "过滤", "筛选", "排序", "搜索", "匹配", "比较", "计算", "推理", "预测", "回溯",
+                    "抽象", "具象", "简化", "复杂", "优化", "劣化", "进化", "退化", "适应", "抵抗",
+                    "漂浮", "坠落", "闪烁", "撕裂", "编织", "溶解", "燃烧", "冻结", "扭曲", "绽放"],
+                    
+            adjectives: ["混沌的", "透明的", "永恒的", "短暂的", "无限的", "有限的", "离散的", 
+                        "连续的", "无序的", "有序的", "虚无的", "存在的", "抽象的", "具体的",
+                        "递归的", "迭代的", "分形的", "全息的", "量子的", "经典的", "相对的", "绝对的",
+                        "线性的", "非线性的", "确定的", "随机的", "可预测的", "不可预测的", "稳定的", "不稳定的",
+                        "对称的", "不对称的", "和谐的", "冲突的", "兼容的", "不兼容的", "开放的", "封闭的",
+                        "内禀的", "外部的", "本征的", "衍生的", "原生的", "派生的", "基础的", "高级的",
+                        "简单的", "复杂的", "优雅的", "粗糙的", "精确的", "模糊的", "清晰的", "朦胧的",
+                        "明亮的", "暗淡的", "温暖的", "冰冷的", "柔软的", "坚硬的", "平滑的", "粗糙的",
+                        "快速的", "缓慢的", "高效的", "低效的", "优化的", "未优化的", "压缩的", "解压的",
+                        "加密的", "解密的", "编码的", "解码的", "传输的", "接收的", "存储的", "检索的"],
+                        
+            adverbs: ["突然", "缓慢", "永远", "瞬间", "反复", "随机", "同步", "异步", "逆向",
+                     "递归地", "迭代地", "分形地", "全息地", "量子地", "经典地", "相对地", "绝对地",
+                     "线性地", "非线性地", "确定地", "随机地", "可预测地", "不可预测地", "稳定地", "不稳定地",
+                     "对称地", "不对称地", "和谐地", "冲突地", "兼容地", "不兼容地", "开放地", "封闭地",
+                     "内禀地", "外部地", "本征地", "衍生地", "原生地", "派生地", "基础地", "高级地",
+                     "简单地", "复杂地", "优雅地", "粗糙地", "精确地", "模糊地", "清晰地", "朦胧地",
+                     "明亮地", "暗淡地", "温暖地", "冰冷地", "柔软地", "坚硬地", "平滑地", "粗糙地",
+                     "快速地", "缓慢地", "高效地", "低效地", "优化地", "未优化地", "压缩地", "解压地",
+                     "加密地", "解密地", "编码地", "解码地", "传输地", "接收地", "存储地", "检索地"],
+                     
+            prepositions: ["在", "从", "向", "于", "穿过", "超越", "之下", "之上", "之间",
+                          "之内", "之外", "之前", "之后", "之上", "之下", "之左", "之右", "之前", "之后",
+                          "通过", "经由", "沿着", "围绕", "关于", "对于", "至于", "由于", "因为", "为了",
+                          "作为", "成为", "像", "似", "如", "同", "与", "和", "及", "或",
+                          "但", "却", "而", "然", "因此", "所以", "于是", "那么", "若", "则"],
+                          
+            conjunctions: ["而", "但", "然而", "因此", "所以", "尽管", "即使", "无论",
+                          "并且", "或者", "还是", "不仅", "而且", "既", "又", "虽然", "但是", "尽管", "可是",
+                          "如果", "假如", "要是", "只要", "只有", "除非", "无论", "不管", "尽管", "即使",
+                          "因为", "由于", "既然", "所以", "因此", "因而", "于是", "然后", "接着", "随后",
+                          "同时", "同样", "相反", "反之", "例如", "比如", "尤其", "特别", "甚至", "尤其"]
+        };
+
+        // 超大Emoji库
+        const emojis = [
+            "🌀", "🌌", "🎆", "🌠", "🌃", "🌅", "🌉", "🌁", "🛸", "🚀", 
+            "🪐", "💫", "✨", "🌙", "🔮", "🎇", "🎑", "🌊", "🔥", "💥",
+            "🌈", "🌪️", "⚡", "❄️", "💧", "🌫️", "💨", "🌟", "⭐", "🌍",
+            "🌎", "🌏", "🌐", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗",
+            "🌘", "🌚", "🌛", "🌜", "☀️", "🌝", "🌞", "🌡️", "🌤️", "🌥️",
+            "🌦️", "🌧️", "🌨️", "🌩️", "🌭", "🌮", "🌯", "🍔", "🍕", "🍖",
+            "🍗", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍞", "🍟", "🍠",
+            "🍡", "🍢", "🍣", "🍤", "🍥", "🥮", "🍦", "🍧", "🍨", "🍩",
+            "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯",
+            "🍼", "🥛", "☕", "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺",
+            "🍻", "🥂", "🥃", "🥤", "🧃", "🧉", "🧊", "🥢", "🍽️", "🍴",
+            "🥄", "🔪", "🏺", "🌶️", "🧂", "🥑", "🍆", "🥔", "🥕", "🌽"
+        ];
+
+        // 高饱和纯色背景
+        const colors = [
+            '#ff00c8', '#9600ff', '#00ffea', '#00b3ff', '#ff9900', '#ff006a',
+            '#6e45e2', '#88d3ce', '#ff00cc', '#333399', '#00dbde', '#fc00ff',
+            '#f6d365', '#fda085', '#5ee7df', '#b490ca', '#d299c2', '#fef9d7',
+            '#a1c4fd', '#c2e9fb', '#ff0000', '#00ff00', '#0000ff', '#ffff00',
+            '#ff00ff', '#00ffff', '#ff8000', '#ff0080', '#8000ff', '#00ff80',
+            '#ff80ff', '#80ffff', '#ffcc00', '#ccff00', '#00ccff', '#cc00ff',
+            '#ff00cc', '#00ffcc', '#ccffcc', '#ffccff', '#ff6666', '#66ff66',
+            '#6666ff', '#ffff66', '#ff66ff', '#66ffff', '#ff9966', '#ff6699',
+            '#9966ff', '#66ff99', '#ff99ff', '#99ffff', '#ff3333', '#33ff33',
+            '#3333ff', '#ffff33', '#ff33ff', '#33ffff', '#ffcc33', '#ff33cc',
+            '#cc33ff', '#33ffcc'
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            let currentPoems = [];
+            
+            // 创建疯狂emoji
+            function createEmoji() {
+                const emoji = document.createElement('div');
+                emoji.classList.add('emoji');
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                // 随机位置
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                emoji.style.left = `${x}px`;
+                emoji.style.top = `${y}px`;
+                
+                // 随机大小 (1-6rem)
+                const size = 1 + Math.random() * 5;
+                emoji.style.fontSize = `${size}rem`;
+                
+                // 随机动画速度
+                const shakeSpeed = 0.1 + Math.random() * 0.4;
+                emoji.style.animationDuration = `${shakeSpeed}s`;
+                
+                // 随机移动方向和距离 (2000px)
+                const moveX = (Math.random() - 0.5) * 2000;
+                const moveY = (Math.random() - 0.5) * 2000;
+                const moveSpeed = 0.5 + Math.random() * 4.5;
+                
+                emoji.style.setProperty('--move-x', `${moveX}px`);
+                emoji.style.setProperty('--move-y', `${moveY}px`);
+                emoji.style.animation += `, move ${moveSpeed}s linear forwards`;
+                
+                // 随机旋转角度 (0-360度)
+                const rotate = Math.random() * 360;
+                emoji.style.setProperty('--rotate', `${rotate}deg`);
+                emoji.style.animation += `, rotate ${moveSpeed}s linear forwards`;
+                
+                // 随机缩放 (0.5-1.5倍)
+                const scale = 0.5 + Math.random();
+                emoji.style.setProperty('--scale', scale);
+                emoji.style.animation += `, scale ${moveSpeed}s ease-in-out forwards`;
+                
+                container.appendChild(emoji);
+                
+                // 随机停留时间 (3-10秒)
+                const stayTime = 3000 + Math.random() * 7000;
+                
+                // 一段时间后移除
+                setTimeout(() => {
+                    emoji.remove();
+                }, stayTime);
+            }
+            
+            // 创建抽象诗句
+            function createPoem() {
+                // 移除当前诗句
+                currentPoems.forEach(poem => poem.remove());
+                currentPoems = [];
+                
+                // 随机创建1-3个诗句
+                const poemCount = 1 + Math.floor(Math.random() * 3);
+                
+                for (let i = 0; i < poemCount; i++) {
+                    const poem = document.createElement('div');
+                    poem.classList.add('poem');
+                    currentPoems.push(poem);
+                    
+                    // 生成随机诗句
+                    poem.textContent = generateRandomPoem();
+                    
+                    // 随机字体大小 (1.5-3rem)
+                    const fontSize = 1.5 + Math.random() * 1.5;
+                    poem.style.fontSize = `${fontSize}rem`;
+                    
+                    // 随机位置
+                    const x = Math.random() * (window.innerWidth - 300);
+                    const y = Math.random() * (window.innerHeight - 100);
+                    poem.style.left = `${x}px`;
+                    poem.style.top = `${y}px`;
+                    
+                    // 随机压缩宽度和高度
+                    const scaleX = 0.2 + Math.random() * 0.8;
+                    const scaleY = 0.2 + Math.random() * 0.8;
+                    poem.style.transform = `scale(${scaleX}, ${scaleY})`;
+                    
+                    // 随机字母间距
+                    const letterSpacing = (-0.1 + Math.random() * 0.2) + 'em';
+                    poem.style.letterSpacing = letterSpacing;
+                    
+                    // 随机单词间距
+                    const wordSpacing = (-0.1 + Math.random() * 0.2) + 'em';
+                    poem.style.wordSpacing = wordSpacing;
+                    
+                    // 随机行高
+                    const lineHeight = 0.8 + Math.random() * 0.4;
+                    poem.style.lineHeight = lineHeight;
+                    
+                    // 随机背景色
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    poem.style.background = color;
+                    
+                    container.appendChild(poem);
+                    
+                    // 动画结束后移除
+                    setTimeout(() => {
+                        const index = currentPoems.indexOf(poem);
+                        if (index > -1) {
+                            currentPoems.splice(index, 1);
+                        }
+                        poem.remove();
+                    }, 8000 + Math.random() * 8000);
+                }
+            }
+            
+            // 生成随机抽象诗句
+            function generateRandomPoem() {
+                const structures = [
+                    () => `${randomAdj()}${randomNoun()} ${randomVerb()} ${randomPrep()} ${randomAdj()}${randomNoun()}`,
+                    () => `${randomAdv()} ${randomVerb()} ${randomNoun()} ${randomConj()} ${randomVerb()} ${randomNoun()}`,
+                    () => `${randomNoun()} ${randomPrep()} ${randomAdj()}${randomNoun()} ${randomVerb()} ${randomAdv()}`,
+                    () => `${randomAdj()}${randomNoun()} ${randomConj()} ${randomAdj()}${randomNoun()} ${randomVerb()} ${randomAdv()}`,
+                    () => `${randomVerb()} ${randomPrep()} ${randomAdj()}${randomNoun()} ${randomConj()} ${randomVerb()} ${randomPrep()} ${randomNoun()}`
+                ];
+                
+                const structure = structures[Math.floor(Math.random() * structures.length)];
+                return structure();
+            }
+            
+            // 辅助函数：从词汇库中随机选择词语
+            function randomNoun() {
+                return words.nouns[Math.floor(Math.random() * words.nouns.length)];
+            }
+            
+            function randomVerb() {
+                return words.verbs[Math.floor(Math.random() * words.verbs.length)];
+            }
+            
+            function randomAdj() {
+                return words.adjectives[Math.floor(Math.random() * words.adjectives.length)];
+            }
+            
+            function randomAdv() {
+                return words.adverbs[Math.floor(Math.random() * words.adverbs.length)];
+            }
+            
+            function randomPrep() {
+                return words.prepositions[Math.floor(Math.random() * words.prepositions.length)];
+            }
+            
+            function randomConj() {
+                return words.conjunctions[Math.floor(Math.random() * words.conjunctions.length)];
+            }
+            
+            // 创建关键帧动画
+            function createKeyframeAnimation(name, keyframes) {
+                const style = document.createElement('style');
+                let css = `@keyframes ${name} {`;
+                
+                for (let i = 0; i < keyframes.length; i++) {
+                    const percent = i * (100 / (keyframes.length - 1));
+                    css += `${percent}% { ${Object.entries(keyframes[i])
+                        .map(([prop, value]) => `${prop}: ${value}`)
+                        .join('; ')} }`;
+                }
+                
+                css += '}';
+                style.textContent = css;
+                document.head.appendChild(style);
+            }
+            
+            // 创建移动动画
+            createKeyframeAnimation('move', [
+                { transform: 'translate(0, 0)' },
+                { transform: 'translate(var(--move-x), var(--move-y))' }
+            ]);
+            
+            // 创建旋转动画
+            createKeyframeAnimation('rotate', [
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(var(--rotate))' }
+            ]);
+            
+            // 创建缩放动画
+            createKeyframeAnimation('scale', [
+                { transform: 'scale(1)' },
+                { transform: 'scale(var(--scale))' }
+            ]);
+            
+            // 疯狂创建emoji
+            setInterval(createEmoji, 100);
+            
+            // 持续创建诗句
+            setInterval(createPoem, 3000);
+            
+            // 背景色丝滑变换
+            setInterval(() => {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                document.body.style.background = color;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
 
